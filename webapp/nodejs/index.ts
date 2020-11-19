@@ -376,12 +376,14 @@ async function getNewItems(req: FastifyRequest, reply: FastifyReply<ServerRespon
     let itemSimples: ItemSimple[] = [];
 
     for (const item of items) {
+        // N + 1 
         const seller = await getUserSimpleByID(db, item.seller_id);
         if (seller === null) {
             replyError(reply, "seller not found", 404)
             await db.release();
             return;
         }
+        // N + 1 
         const category = await getCategoryByID(db, item.category_id);
         if (category === null) {
             replyError(reply, "category not found", 404)
@@ -501,12 +503,14 @@ async function getNewCategoryItems(req: FastifyRequest, reply: FastifyReply<Serv
     let itemSimples: ItemSimple[] = [];
 
     for (const item of items) {
+        // N + 1
         const seller = await getUserSimpleByID(db, item.seller_id);
         if (seller === null) {
             replyError(reply, "seller not found", 404)
             await db.release();
             return;
         }
+        // N + 1
         const category = await getCategoryByID(db, item.category_id);
         if (category === null) {
             replyError(reply, "category not found", 404)
@@ -627,6 +631,7 @@ async function getTransactions(req: FastifyRequest, reply: FastifyReply<ServerRe
 
     let itemDetails: ItemDetail[] = [];
     for (const item of items) {
+        // N + 1
         const category = await getCategoryByID(db, item.category_id);
         if (category === null) {
             replyError(reply, "category not found", 404)
@@ -635,6 +640,7 @@ async function getTransactions(req: FastifyRequest, reply: FastifyReply<ServerRe
             return;
         }
 
+        // N + 1
         const seller = await getUserSimpleByID(db, item.seller_id);
         if (seller === null) {
             replyError(reply, "seller not found", 404)
@@ -805,6 +811,7 @@ async function getUserItems(req: FastifyRequest, reply: FastifyReply<ServerRespo
 
     let itemSimples: ItemSimple[] = [];
     for (const item of items) {
+        // N + 1
         const category = await getCategoryByID(db, item.category_id);
         if (category === null) {
             replyError(reply, "category not found", 404)
@@ -2163,6 +2170,7 @@ async function getCategoryByID(db: MySQLQueryable, categoryId: number): Promise<
     for (const row of rows) {
         const category = row as Category;
         if (category.parent_id !== undefined && category.parent_id != 0) {
+            // N + 1
             const parentCategory = await getCategoryByID(db, category.parent_id);
             if (parentCategory !== null) {
                 category.parent_category_name = parentCategory.category_name
